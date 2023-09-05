@@ -1,0 +1,21 @@
+# Prepare your EC2 instance to run your Flask web application server
+# install python and virtualenv
+sudo yum install python3
+sudo pip3 install virtualenv
+
+# copy the Flask python script and png image from your S3 bucket to your EC2 instance
+aws s3 cp s3://pre-signed-url-lab/pre-signedURLFlask.py pre-signedURLFlask.py
+aws s3 cp s3://pre-signed-url-lab/ScatterChart.png ScatterChart.png
+
+# Run your Flask web application server
+# pre-signedURLFlask.py for the Flask pre-signed URL server
+virtualenv venv
+source ./venv/bin/activate
+pip3 install boto3
+export FLASK_APP=pre-signedURLFlask.py
+export SECRET_KEY=0987654321
+pip install flask
+flask run -h 0.0.0.0 -p 5000 --reload
+
+# Link to Flask page about web servers
+https://flask.palletsprojects.com/en/1.1.x/
