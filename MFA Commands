@@ -1,0 +1,30 @@
+# Script to set aws config (use for either root or a specific user)
+# and save in a shell script file such as change_user.sh
+aws configure set default.region us-east-1
+aws configure set aws_access_key_id 'your access key'
+aws configure set aws_secret_access_key 'your secret key'
+
+# Get your MFA keys
+aws iam list-virtual-mfa-devices > mfa-codes.txt
+
+# Save your mfa key as an environment variable
+export mfakey="arn:aws:iam::123456789098:mfa/root-account-mfa-device"
+
+# create bucket
+aws s3api create-bucket --bucket mfa-tester --region us-east-1
+
+# Enable versioning and MFA delete on bucket (as root via aws configuyre and mfa arn)
+aws s3api put-bucket-versioning --bucket mfa-tester --versioning-configuration Status=Enabled,MFADelete=Enabled --mfa "arn:aws:iam::123456789098:mfa/root-account-mfa-device 249379"
+OR (using environment variable $mfakey variable)
+aws s3api put-bucket-versioning --bucket mfa-tester --versioning-configuration Status=Enabled,MFADelete=Enabled --mfa "$mfakey 249379"
+
+# List objects in your bucket with version ids
+aws s3api list-object-versions --bucket mfa-tester --query 'Versions[].{Key: Key, VersionId: VersionId}'
+
+# Get an object from your bucket
+aws s3api get-object --bucket mfa-tester --key session-store.txt temp.txt
+
+# Delete object as root using version-id
+aws s3api delete-object --bucket mfa-tester --key session-store.txt --version-id null --mfa "arn:aws:iam::123456789098:mfa/root-account-mfa-device 494663"
+OR (using environment $mfakey variable)
+aws s3api delete-object --bucket mfa-tester --key session-store.txt --version-id 6jKJvHP30DgzMsnm_thIO.7_C0zqeYfz --mfa "$mfakey 983288"
