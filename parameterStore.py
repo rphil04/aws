@@ -4,7 +4,11 @@ AWS SSM Parameter Retrieval Script
 This script allows you to retrieve parameter values from AWS Systems Manager Parameter Store (SSM) and optionally decrypt them.
 
 Usage:
-  python ssm_parameter_retrieval.py --parameter <parameter_name> [--decrypt <True/False>]
+  python parameterStore.py --parameter <parameter_name> [--decrypt <True/False>]
+
+Examples:
+  python parameterStore.py --parameter='ssn_string' --decrypt='False'
+  python parameterStore.py --parameter='ssn_string' --decrypt='True'
 
 Options:
   --parameter <parameter_name>  Name of the parameter to retrieve from AWS SSM (required).
